@@ -56,23 +56,47 @@ document.addEventListener('DOMContentLoaded', () => {
         displayLeiturasGrid(data.leituras);
     }
 
-    function handleSaintOfTheDay(liturgiaTitle) {
+    async function handleSaintOfTheDay(liturgiaTitle) {
         const match = liturgiaTitle.match(/^[^,–—-]+/);
 
         if (match && !match[0].toLowerCase().includes('feira')) {
             const saintName = match[0].trim();
             santoNome.textContent = saintName;
 
-            const searchQuery = saintName.replace(/\s+/g, ',') + ',saint,catholic,art';
-            santoImagem.src = `https://source.unsplash.com/800x400/?${searchQuery}`;
-            santoImagem.alt = saintName;
-
-            santoDoDiaDiv.style.display = 'block';
-            santoImagem.onload = () => santoDoDiaDiv.style.display = 'block';
-            santoImagem.onerror = () => santoDoDiaDiv.style.display = 'none';
+            try {
+                const imageUrl = await fetchWikipediaImage(saintName);
+                if (imageUrl) {
+                    santoImagem.src = imageUrl;
+                    santoImagem.alt = saintName;
+                    santoDoDiaDiv.style.display = 'block';
+                    santoImagem.onerror = () => santoDoDiaDiv.style.display = 'none';
+                } else {
+                    santoDoDiaDiv.style.display = 'none';
+                }
+            } catch (error) {
+                console.error("Erro ao buscar imagem da Wikipedia:", error);
+                santoDoDiaDiv.style.display = 'none';
+            }
         } else {
             santoDoDiaDiv.style.display = 'none';
         }
+    }
+
+    async function fetchWikipediaImage(query) {
+        const url = `https://pt.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=400&origin=*&redirects=1`;
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Não foi possível buscar imagem na Wikipedia.');
+
+        const data = await response.json();
+        const pages = data.query.pages;
+        const pageId = Object.keys(pages)[0];
+
+        if (pageId === "-1" || !pages[pageId].thumbnail) {
+            return null; // No image found
+        }
+
+        return pages[pageId].thumbnail.source;
     }
 
     function displayLeiturasGrid(leituras) {
@@ -82,13 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         readingOrder.forEach(key => {
             if (leituras[key] && leituras[key].length > 0) {
-                const leitura = leituras[key][0]; // Take the first option
                 const title = getTitleForKey(key);
 
                 const bloco = document.createElement('div');
                 bloco.className = 'leitura-bloco';
                 bloco.innerHTML = `<h3>${title}</h3>`;
-                bloco.dataset.key = key; // Store key to retrieve content later
 
                 bloco.addEventListener('click', () => {
                     const content = formatLeituraForOffCanvas(key, liturgiaCache.leituras);
@@ -111,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatLeituraForOffCanvas(key, leituras) {
-        const leituraData = leituras[key][0];
+        const leituraData = leituras[key][0]; // Assuming one version for now
         let content = `<h3>${leituraData.titulo || getTitleForKey(key)}</h3>`;
         content += `<p><em>${leituraData.referencia}</em></p>`;
 
