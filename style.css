@@ -46,6 +46,8 @@ h1 {
     color: #2c3e50;
     font-size: 2.2rem;
     margin-bottom: 2rem;
+    line-height: 110%;
+    letter-spacing: -1px;
 }
 
 h2 {
@@ -66,6 +68,7 @@ h3 {
 p {
     font-size: 1rem;
     color: #555;
+    line-height: 150%;
 }
 
 .cor-liturgica {
