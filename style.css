@@ -1,42 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
 body {
-    font-family: sans-serif;
-    line-height: 1.6;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.8;
     margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-}
-
-#container {
-    max-width: 800px;
-    margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
+    padding: 0;
+    background-color: #f9f9f9;
     color: #333;
 }
 
-#liturgia-content h2 {
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
+#container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-#liturgia-content p {
-    margin-bottom: 10px;
+#santo-do-dia {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+#santo-imagem {
+    max-width: 100%;
+    height: auto;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    object-fit: cover;
+}
+
+#santo-nome {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+}
+
+h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #34495e;
+}
+
+h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #7f8c8d;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 0.5rem;
+    margin-top: 2rem;
+}
+
+p {
+    font-size: 1rem;
+    color: #555;
 }
 
 .cor-liturgica {
-    padding: 10px;
-    margin-bottom: 20px;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 1.5rem;
     border-radius: 5px;
     color: #fff;
+    text-align: center;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.Branco { background-color: #d3d3d3; color: #000; }
-.Verde { background-color: #2e8b57; }
-.Vermelho { background-color: #b22222; }
-.Roxo { background-color: #8a2be2; }
-.Rosa { background-color: #ffc0cb; color: #000; }
+.Branco { background-color: #ecf0f1; color: #333; border: 1px solid #dcdcdc; }
+.Verde { background-color: #27ae60; }
+.Vermelho { background-color: #c0392b; }
+.Roxo { background-color: #8e44ad; }
+.Rosa { background-color: #f39c12; }
