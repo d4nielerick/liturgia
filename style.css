@@ -1,0 +1,42 @@
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+#container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #333;
+}
+
+#liturgia-content h2 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+#liturgia-content p {
+    margin-bottom: 10px;
+}
+
+.cor-liturgica {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.Branco { background-color: #d3d3d3; color: #000; }
+.Verde { background-color: #2e8b57; }
+.Vermelho { background-color: #b22222; }
+.Roxo { background-color: #8a2be2; }
+.Rosa { background-color: #ffc0cb; color: #000; }
