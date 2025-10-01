@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
 
 body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1.8;
     margin: 0;
     padding: 0;
@@ -84,3 +84,114 @@ p {
 .Vermelho { background-color: #c0392b; }
 .Roxo { background-color: #8e44ad; }
 .Rosa { background-color: #f39c12; }
+
+#liturgia-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#liturgia-titulo {
+    margin-bottom: 0.5rem;
+}
+
+#liturgia-data {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-top: 0;
+}
+
+#leituras-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.leitura-bloco {
+    background-color: #ecf0f1;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #dcdcdc;
+}
+
+.leitura-bloco:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px M16px rgba(0,0,0,0.1);
+}
+
+.leitura-bloco h3 {
+    margin: 0;
+    color: #34495e;
+    font-size: 1.2rem;
+}
+
+#calendario-container {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+#calendario-container label {
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+#date-picker {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Off-canvas styles */
+#offcanvas-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: flex-end;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+#offcanvas-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#offcanvas-content {
+    background-color: #fff;
+    width: 90%;
+    max-width: 450px;
+    padding: 2rem;
+    overflow-y: auto;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+}
+
+#offcanvas-container.hidden #offcanvas-content {
+    transform: translateX(100%);
+}
+
+#offcanvas-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: #777;
+}
+
+#offcanvas-body h3 {
+    margin-top: 0;
+}

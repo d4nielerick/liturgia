@@ -1,104 +1,156 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const liturgiaContentDiv = document.getElementById('liturgia-content');
+    // DOM Elements
     const santoDoDiaDiv = document.getElementById('santo-do-dia');
     const santoImagem = document.getElementById('santo-imagem');
     const santoNome = document.getElementById('santo-nome');
+    const liturgiaTitulo = document.getElementById('liturgia-titulo');
+    const liturgiaData = document.getElementById('liturgia-data');
+    const liturgiaCor = document.getElementById('liturgia-cor');
+    const leiturasGrid = document.getElementById('leituras-grid');
+    const datePicker = document.getElementById('date-picker');
 
-    async function fetchLiturgy() {
+    // Off-canvas Elements
+    const offcanvasContainer = document.getElementById('offcanvas-container');
+    const offcanvasCloseBtn = document.getElementById('offcanvas-close');
+    const offcanvasBody = document.getElementById('offcanvas-body');
+
+    // State
+    let liturgiaCache = {};
+
+    // --- Functions ---
+
+    async function fetchLiturgy(date = null) {
+        let url = 'https://liturgia.up.railway.app/v2/';
+        if (date) {
+            const [year, month, day] = date.split('-');
+            url += `?dia=${day}&mes=${month}&ano=${year}`;
+        }
+
         try {
-            const response = await fetch('https://liturgia.up.railway.app/v2/');
-            if (!response.ok) {
-                throw new Error('Não foi possível buscar a liturgia.');
-            }
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Resposta da rede não foi OK.');
             const data = await response.json();
+            if (data.erro) throw new Error(data.erro);
 
-            if (data.erro) {
-                throw new Error(data.erro);
-            }
-
-            displayLiturgy(data);
-            handleSaintOfTheDay(data.liturgia);
+            liturgiaCache = data; // Store current liturgy data
+            updateUI(data);
 
         } catch (error) {
-            liturgiaContentDiv.innerHTML = `<p>Erro ao carregar a liturgia: ${error.message}</p>`;
+            leiturasGrid.innerHTML = `<p>Erro ao carregar a liturgia: ${error.message}</p>`;
             santoDoDiaDiv.style.display = 'none';
+            liturgiaTitulo.textContent = "Liturgia não encontrada";
+            liturgiaData.textContent = "";
+            liturgiaCor.style.display = 'none';
         }
     }
 
+    function updateUI(data) {
+        // Update header
+        liturgiaTitulo.textContent = data.liturgia;
+        liturgiaData.textContent = data.data;
+        liturgiaCor.textContent = data.cor;
+        liturgiaCor.className = `cor-liturgica ${data.cor}`;
+        liturgiaCor.style.display = 'block';
+
+        handleSaintOfTheDay(data.liturgia);
+        displayLeiturasGrid(data.leituras);
+    }
+
     function handleSaintOfTheDay(liturgiaTitle) {
-        // Tenta extrair o nome do santo do título da liturgia.
-        // A heurística é pegar o texto antes da primeira vírgula ou hífen.
         const match = liturgiaTitle.match(/^[^,–—-]+/);
 
-        if (match && match[0].toLowerCase().includes('feira')) {
-            // Se for um dia de semana comum (ex: "Quarta-feira da 2ª semana..."), não exibe santo.
-            santoDoDiaDiv.style.display = 'none';
-            return;
-        }
-
-        if (match) {
+        if (match && !match[0].toLowerCase().includes('feira')) {
             const saintName = match[0].trim();
             santoNome.textContent = saintName;
 
-            // Prepara o nome para a busca de imagem
-            const searchQuery = saintName.replace(/\s+/g, ',') + ',saint,catholic';
+            const searchQuery = saintName.replace(/\s+/g, ',') + ',saint,catholic,art';
             santoImagem.src = `https://source.unsplash.com/800x400/?${searchQuery}`;
             santoImagem.alt = saintName;
 
-            // Mostra a seção, mas adiciona um manipulador de erro para a imagem
             santoDoDiaDiv.style.display = 'block';
-            santoImagem.onerror = () => {
-                // Se a imagem não carregar, oculta a seção inteira.
-                santoDoDiaDiv.style.display = 'none';
-            };
+            santoImagem.onload = () => santoDoDiaDiv.style.display = 'block';
+            santoImagem.onerror = () => santoDoDiaDiv.style.display = 'none';
         } else {
             santoDoDiaDiv.style.display = 'none';
         }
     }
 
-    function displayLiturgy(data) {
-        liturgiaContentDiv.innerHTML = `
-            <h2>${data.liturgia} - ${data.data}</h2>
-            <div class="cor-liturgica ${data.cor}">${data.cor}</div>
-        `;
+    function displayLeiturasGrid(leituras) {
+        leiturasGrid.innerHTML = ''; // Clear previous blocks
 
-        if (data.leituras.primeiraLeitura) {
-            data.leituras.primeiraLeitura.forEach(leitura => {
-                liturgiaContentDiv.innerHTML += `
-                    <h3>${leitura.titulo} (${leitura.referencia})</h3>
-                    <p>${leitura.texto.replace(/\n/g, '<br>')}</p>
-                `;
-            });
-        }
+        const readingOrder = ['primeiraLeitura', 'salmo', 'segundaLeitura', 'evangelho'];
 
-        if (data.leituras.salmo) {
-            data.leituras.salmo.forEach(salmo => {
-                liturgiaContentDiv.innerHTML += `
-                    <h3>Salmo (${salmo.referencia})</h3>
-                    <p><strong>Refrão: ${salmo.refrao}</strong></p>
-                    <p>${salmo.texto.replace(/\n/g, '<br>')}</p>
-                `;
-            });
-        }
+        readingOrder.forEach(key => {
+            if (leituras[key] && leituras[key].length > 0) {
+                const leitura = leituras[key][0]; // Take the first option
+                const title = getTitleForKey(key);
 
-        if (data.leituras.segundaLeitura && data.leituras.segundaLeitura.length > 0) {
-            data.leituras.segundaLeitura.forEach(leitura => {
-                liturgiaContentDiv.innerHTML += `
-                    <h3>${leitura.titulo} (${leitura.referencia})</h3>
-                    <p>${leitura.texto.replace(/\n/g, '<br>')}</p>
-                `;
-            });
-        }
+                const bloco = document.createElement('div');
+                bloco.className = 'leitura-bloco';
+                bloco.innerHTML = `<h3>${title}</h3>`;
+                bloco.dataset.key = key; // Store key to retrieve content later
 
-        if (data.leituras.evangelho) {
-            data.leituras.evangelho.forEach(evangelho => {
-                 liturgiaContentDiv.innerHTML += `
-                    <h3>${evangelho.titulo} (${evangelho.referencia})</h3>
-                    <p>${evangelho.texto.replace(/\n/g, '<br>')}</p>
-                `;
-            });
-        }
+                bloco.addEventListener('click', () => {
+                    const content = formatLeituraForOffCanvas(key, liturgiaCache.leituras);
+                    openOffCanvas(content);
+                });
+
+                leiturasGrid.appendChild(bloco);
+            }
+        });
     }
+
+    function getTitleForKey(key) {
+        const titles = {
+            'primeiraLeitura': '1ª Leitura',
+            'salmo': 'Salmo',
+            'segundaLeitura': '2ª Leitura',
+            'evangelho': 'Evangelho'
+        };
+        return titles[key] || 'Leitura';
+    }
+
+    function formatLeituraForOffCanvas(key, leituras) {
+        const leituraData = leituras[key][0];
+        let content = `<h3>${leituraData.titulo || getTitleForKey(key)}</h3>`;
+        content += `<p><em>${leituraData.referencia}</em></p>`;
+
+        if(key === 'salmo' && leituraData.refrao) {
+            content += `<p><strong>Refrão: ${leituraData.refrao}</strong></p>`;
+        }
+
+        content += `<p>${leituraData.texto.replace(/\n/g, '<br>')}</p>`;
+        return content;
+    }
+
+    function openOffCanvas(content) {
+        offcanvasBody.innerHTML = content;
+        offcanvasContainer.classList.remove('hidden');
+    }
+
+    function closeOffCanvas() {
+        offcanvasContainer.classList.add('hidden');
+    }
+
+    // --- Event Listeners ---
+
+    offcanvasCloseBtn.addEventListener('click', closeOffCanvas);
+    offcanvasContainer.addEventListener('click', (e) => {
+        if (e.target === offcanvasContainer) {
+            closeOffCanvas();
+        }
+    });
+
+    datePicker.addEventListener('change', (e) => {
+        fetchLiturgy(e.target.value);
+    });
+
+    // Set date picker to today and fetch initial liturgy
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    datePicker.value = `${year}-${month}-${day}`;
 
     fetchLiturgy();
 });
