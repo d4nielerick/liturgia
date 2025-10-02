@@ -51,14 +51,18 @@ document.addEventListener('DOMContentLoaded', () => {
         liturgiaCor.className = `cor-liturgica ${data.cor}`;
         liturgiaCor.style.display = 'block';
 
-        handleSaintOfTheDay(data.liturgia);
+        handleSaintOfTheDay(data.data); // Pass the date string
         displayLeiturasGrid(data.leituras);
     }
 
-    function handleSaintOfTheDay(liturgiaTitle) {
-        const match = liturgiaTitle.match(/^[^,–—-]+/);
-        if (match && !match[0].toLowerCase().includes('feira')) {
-            const saintName = match[0].trim();
+    function handleSaintOfTheDay(dateString) {
+        // Format dateString "DD/MM/YYYY" to "MM-DD"
+        const [day, month] = dateString.split('/');
+        const key = `${month}-${day}`;
+
+        const saintName = santosDoAno[key];
+
+        if (saintName) {
             santoNome.textContent = saintName;
             santoDoDiaDiv.style.display = 'block';
         } else {
