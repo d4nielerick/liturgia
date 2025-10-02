@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const liturgiaData = document.getElementById('liturgia-data');
     const liturgiaCor = document.getElementById('liturgia-cor');
     const leiturasGrid = document.getElementById('leituras-grid');
-    const datePicker = document.getElementById('date-picker');
+    const timelineContainer = document.getElementById('timeline-container');
 
     // Off-canvas Elements
     const offcanvasContainer = document.getElementById('offcanvas-container');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (data.erro) throw new Error(data.erro);
 
-            liturgiaCache = data; // Store current liturgy data
+            liturgiaCache = data;
             updateUI(data);
 
         } catch (error) {
@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateUI(data) {
-        // Update header
         liturgiaTitulo.textContent = data.liturgia;
         liturgiaData.textContent = data.data;
         liturgiaCor.textContent = data.cor;
@@ -58,18 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleSaintOfTheDay(liturgiaTitle) {
         const match = liturgiaTitle.match(/^[^,–—-]+/);
-
         if (match && !match[0].toLowerCase().includes('feira')) {
             const saintName = match[0].trim();
             santoNome.textContent = saintName;
-
             try {
                 const imageUrl = await fetchWikipediaImage(saintName);
                 if (imageUrl) {
                     santoImagem.src = imageUrl;
                     santoImagem.alt = saintName;
                     santoDoDiaDiv.style.display = 'block';
-                    santoImagem.onerror = () => santoDoDiaDiv.style.display = 'none';
                 } else {
                     santoDoDiaDiv.style.display = 'none';
                 }
@@ -84,39 +80,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchWikipediaImage(query) {
         const url = `https://pt.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(query)}&prop=pageimages&format=json&pithumbsize=400&origin=*&redirects=1`;
-
         const response = await fetch(url);
         if (!response.ok) throw new Error('Não foi possível buscar imagem na Wikipedia.');
-
         const data = await response.json();
         const pages = data.query.pages;
         const pageId = Object.keys(pages)[0];
-
         if (pageId === "-1" || !pages[pageId].thumbnail) {
-            return null; // No image found
+            return null;
         }
-
         return pages[pageId].thumbnail.source;
     }
 
     function displayLeiturasGrid(leituras) {
-        leiturasGrid.innerHTML = ''; // Clear previous blocks
-
+        leiturasGrid.innerHTML = '';
         const readingOrder = ['primeiraLeitura', 'salmo', 'segundaLeitura', 'evangelho'];
-
         readingOrder.forEach(key => {
             if (leituras[key] && leituras[key].length > 0) {
                 const title = getTitleForKey(key);
-
                 const bloco = document.createElement('div');
                 bloco.className = 'leitura-bloco';
                 bloco.innerHTML = `<h3>${title}</h3>`;
-
                 bloco.addEventListener('click', () => {
                     const content = formatLeituraForOffCanvas(key, liturgiaCache.leituras);
                     openOffCanvas(content);
                 });
-
                 leiturasGrid.appendChild(bloco);
             }
         });
@@ -133,14 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatLeituraForOffCanvas(key, leituras) {
-        const leituraData = leituras[key][0]; // Assuming one version for now
+        const leituraData = leituras[key][0];
         let content = `<h3>${leituraData.titulo || getTitleForKey(key)}</h3>`;
         content += `<p><em>${leituraData.referencia}</em></p>`;
-
-        if(key === 'salmo' && leituraData.refrao) {
+        if (key === 'salmo' && leituraData.refrao) {
             content += `<p><strong>Refrão: ${leituraData.refrao}</strong></p>`;
         }
-
         content += `<p>${leituraData.texto.replace(/\n/g, '<br>')}</p>`;
         return content;
     }
@@ -154,8 +139,45 @@ document.addEventListener('DOMContentLoaded', () => {
         offcanvasContainer.classList.add('hidden');
     }
 
-    // --- Event Listeners ---
+    function generateTimeline() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
+        for (let i = -7; i <= 7; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            if (i === 0) {
+                item.classList.add('active');
+            }
+
+            const day = date.toLocaleDateString('pt-BR', { weekday: 'short' }).toUpperCase().substring(0, 3);
+            const dateNum = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+            item.innerHTML = `<span class="timeline-day">${day}</span><span class="timeline-date">${dateNum}</span>`;
+
+            const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            item.dataset.date = dateString;
+
+            item.addEventListener('click', () => {
+                document.querySelector('.timeline-item.active')?.classList.remove('active');
+                item.classList.add('active');
+                fetchLiturgy(item.dataset.date);
+            });
+
+            timelineContainer.appendChild(item);
+        }
+
+        // Scroll to the active item
+        const activeItem = document.querySelector('.timeline-item.active');
+        if (activeItem) {
+            activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+    }
+
+    // --- Event Listeners ---
     offcanvasCloseBtn.addEventListener('click', closeOffCanvas);
     offcanvasContainer.addEventListener('click', (e) => {
         if (e.target === offcanvasContainer) {
@@ -163,16 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    datePicker.addEventListener('change', (e) => {
-        fetchLiturgy(e.target.value);
-    });
-
-    // Set date picker to today and fetch initial liturgy
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    datePicker.value = `${year}-${month}-${day}`;
-
-    fetchLiturgy();
+    // --- Initial Load ---
+    generateTimeline();
+    fetchLiturgy(); // Fetch today's liturgy on initial load
 });
