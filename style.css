@@ -1,134 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+:root {
+    --bg-color: #f5f5f7;
+    --container-bg: #ffffff;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --accent-color: #007aff;
+    --border-color: #d2d2d7;
+    --item-bg-hover: #e8e8e8;
+}
 
 body {
-    font-family: 'Inter', sans-serif;
-    line-height: 1.8;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
 }
 
 #container {
-    max-width: 900px;
-    margin: 2rem auto;
-    background: #fff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    max-width: 800px;
+    margin: 3rem auto;
+    background: var(--container-bg);
+    padding: 2rem 3rem;
+    border-radius: 18px;
 }
 
 #santo-do-dia {
     text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #eee;
-}
-
-#santo-imagem {
-    max-width: 100%;
-    height: auto;
-    max-height: 300px;
-    border-radius: 8px;
     margin-bottom: 1rem;
-    object-fit: cover;
 }
 
 #santo-nome {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
-}
-
-h1 {
-    text-align: center;
-    color: #2c3e50;
-    font-size: 2.2rem;
-    margin-bottom: 2rem;
-    line-height: 110%;
-    letter-spacing: -1px;
-}
-
-h2 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #34495e;
-}
-
-h3 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #7f8c8d;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 0.5rem;
-    margin-top: 2rem;
-}
-
-p {
-    font-size: 1rem;
-    color: #555;
-    line-height: 150%;
-}
-
-.cor-liturgica {
-    padding: 0.8rem 1.2rem;
-    margin-bottom: 1.5rem;
-    border-radius: 5px;
-    color: #fff;
-    text-align: center;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
-
-.Branco { background-color: #ecf0f1; color: #333; border: 1px solid #dcdcdc; }
-.Verde { background-color: #27ae60; }
-.Vermelho { background-color: #c0392b; }
-.Roxo { background-color: #8e44ad; }
-.Rosa { background-color: #f39c12; }
 
 #liturgia-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #liturgia-titulo {
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin: 0 0 0.5rem 0;
 }
 
 #liturgia-data {
-    font-size: 1.1rem;
-    color: #7f8c8d;
-    margin-top: 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
 }
+
+.cor-liturgica {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    margin-top: 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.Branco { background-color: #e0e0e0; }
+.Verde { background-color: #34c759; color: #fff; border-color: #34c759;}
+.Vermelho { background-color: #ff3b30; color: #fff; border-color: #ff3b30;}
+.Roxo { background-color: #af52de; color: #fff; border-color: #af52de;}
+.Rosa { background-color: #ff9500; color: #fff; border-color: #ff9500;}
 
 #leituras-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
 .leitura-bloco {
-    background-color: #ecf0f1;
+    background-color: var(--bg-color);
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 12px;
     text-align: center;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid #dcdcdc;
+    transition: background-color 0.2s;
 }
 
 .leitura-bloco:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px M16px rgba(0,0,0,0.1);
+    background-color: var(--item-bg-hover);
 }
 
 .leitura-bloco h3 {
     margin: 0;
-    color: #34495e;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
 #timeline-container {
@@ -136,52 +110,56 @@ p {
     overflow-x: auto;
     white-space: nowrap;
     padding: 1rem 0;
-    border-top: 1px solid #eee;
-    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 2.5rem;
     text-align: center;
+    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
 }
+
+/* Hide scrollbar */
+#timeline-container::-webkit-scrollbar { display: none; }
+#timeline-container { -ms-overflow-style: none; scrollbar-width: none; }
+
 
 .timeline-item {
     display: inline-block;
     cursor: pointer;
-    padding: 0.8rem 1rem;
-    margin: 0 0.5rem;
+    padding: 0.6rem 0.9rem;
+    margin: 0 0.25rem;
     border-radius: 8px;
-    border: 1px solid #dcdcdc;
-    background-color: #f9f9f9;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .timeline-item:hover {
-    background-color: #e0e0e0;
+    background-color: var(--item-bg-hover);
 }
 
 .timeline-item.active {
-    background-color: #2c3e50;
+    background-color: var(--accent-color);
     color: #fff;
-    border-color: #2c3e50;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 .timeline-day {
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
+    text-transform: uppercase;
 }
 
 .timeline-date {
     display: block;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    margin-top: 2px;
 }
 
-/* Off-canvas styles */
 #offcanvas-container {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: flex-end;
     opacity: 1;
@@ -195,13 +173,14 @@ p {
 }
 
 #offcanvas-content {
-    background-color: #fff;
+    background-color: var(--container-bg);
     width: 90%;
     max-width: 450px;
     padding: 2rem;
     overflow-y: auto;
     transform: translateX(0);
     transition: transform 0.3s ease-in-out;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
 }
 
 #offcanvas-container.hidden #offcanvas-content {
@@ -210,15 +189,32 @@ p {
 
 #offcanvas-close {
     position: absolute;
-    top: 1rem;
+    top: 1.5rem;
     right: 1.5rem;
-    background: none;
+    background: #e5e5e5;
     border: none;
-    font-size: 2.5rem;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    line-height: 30px;
+    text-align: center;
     cursor: pointer;
-    color: #777;
+    color: var(--text-secondary);
 }
 
 #offcanvas-body h3 {
     margin-top: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+#offcanvas-body p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+#offcanvas-body em {
+    color: var(--text-secondary);
+    font-style: normal;
 }
